@@ -4,14 +4,22 @@ export type FileServerResult =
       content: string
       content_type: string
     }
+  | {
+      content: string
+      content_type: string
+      file_name: string
+    }
 
 export type BtcFsResult = FileServerResult
 export type IpfsResult = FileServerResult
+export type CkbFsResult = FileServerResult
 
 export type BtcFsURI = `btcfs://${string}`
 export type IpfsURI = `ipfs://${string}`
+export type CkbFsURI = `ckbfs://${string}`
 
 export type QueryBtcFsFn = (uri: BtcFsURI) => Promise<BtcFsResult>
+export type QueryCkbFsFn = (uri: CkbFsURI) => Promise<CkbFsResult>
 export type QueryIpfsFn = (uri: IpfsURI) => Promise<IpfsResult>
 export type QueryUrlFn = (uri: string) => Promise<FileServerResult>
 
@@ -23,7 +31,13 @@ export class Config {
     )
   }
 
-  private _queryUrlFn = async (url: string) => {   
+  private _queryCkbFsFn: QueryCkbFsFn = async (uri) => {
+    return fetch(
+      `https://ckbfs.nvap.app/api/v1/ckbfs/compatible?uri=${uri}`,
+    ).then((res) => res.json())
+  }
+
+  private _queryUrlFn = async (url: string) => {
     try {
       const response = await fetch(url)
       const blob = await response.blob()
@@ -76,6 +90,10 @@ export class Config {
 
   get queryUrlFn(): QueryUrlFn {
     return this._queryUrlFn
+  }
+
+  get queryCkbFsFn(): QueryCkbFsFn {
+    return this._queryCkbFsFn
   }
 }
 

@@ -1,6 +1,6 @@
 import type { INode } from 'svgson'
 import { parse } from 'svgson'
-import type { BtcFsURI, IpfsURI } from './config'
+import type { BtcFsURI, IpfsURI, CkbFsURI } from './config'
 import { config } from './config'
 import { processFileServerResult } from './utils/mime'
 
@@ -15,16 +15,18 @@ async function handleNodeHref(node: INode) {
   }
   if ('href' in node.attributes) {
     const href = node.attributes.href
-    let result;
-    
+    let result
+
     if (href.startsWith('btcfs://')) {
       result = await config.queryBtcFsFn(node.attributes.href as BtcFsURI)
+    } else if (href.startsWith('ckbfs://')) {
+      result = await config.queryCkbFsFn(node.attributes.href as CkbFsURI)
     } else if (href.startsWith('ipfs://')) {
       result = await config.queryIpfsFn(node.attributes.href as IpfsURI)
     } else {
       result = await config.queryUrlFn(node.attributes.href as string)
     }
-    
+
     node.attributes.href = processFileServerResult(result)
   }
 
