@@ -3,7 +3,7 @@ import type { ParsedTrait } from './traits-parser'
 import { config } from './config'
 import { backgroundColorParser } from './background-color-parser'
 import { processFileServerResult } from './utils/mime'
-import { isBtcFs, isIpfs } from './utils/string'
+import { isBtcFs, isCkbfs, isIpfs } from './utils/string'
 
 export async function renderImageSvg(traits: ParsedTrait[]): Promise<string> {
   const prevBg = traits.find((trait) => trait.name === 'prev.bg')
@@ -14,6 +14,9 @@ export async function renderImageSvg(traits: ParsedTrait[]): Promise<string> {
     if (isBtcFs(prevBg.value)) {
       const btcFsResult = await config.queryBtcFsFn(prevBg.value)
       bgImage = processFileServerResult(btcFsResult)
+    } else if (isCkbfs(prevBg.value)) {
+      const ckbfsResult = await config.queryCkbFsFn(prevBg.value)
+      bgImage = processFileServerResult(ckbfsResult)
     } else if (isIpfs(prevBg.value)) {
       const ipfsFsResult = await config.queryIpfsFn(prevBg.value)
       bgImage = processFileServerResult(ipfsFsResult)
