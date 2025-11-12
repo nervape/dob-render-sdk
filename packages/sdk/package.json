@@ -1,6 +1,6 @@
 {
   "name": "@nervape/dob-render",
-  "version": "0.2.6",
+  "version": "0.2.7",
   "description": "RGB++ DOB render SDK, with CKBFS support",
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
